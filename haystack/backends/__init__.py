@@ -215,6 +215,8 @@ class BaseSearchQuery(object):
         self.date_facets = {}
         self.query_facets = {}
         self.narrow_queries = set()
+        self.collapse_field = None
+        self.collapse_max = None
         self._more_like_this = False
         self._mlt_instance = None
         self._results = None
@@ -452,6 +454,14 @@ class BaseSearchQuery(object):
     def add_narrow_query(self, query):
         """Adds a existing facet on a field."""
         self.narrow_queries.add(query)
+    
+    def collapse(self, field, max):
+        """
+        Collapses (groups) results matching field_name to max 
+        as specified in SOLR-236 slated for 1.4/5
+        """
+        self.collapse_field = field
+        self.collapse_max = max
     
     def _reset(self):
         """
