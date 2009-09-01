@@ -292,13 +292,13 @@ class SearchQuerySet(object):
         clone.query.add_narrow_query(query)
         return clone
     
-    def collapse(self, field, max):
+    def collapse(self, field, max, collapse_type='normal'):
         """
         Collapses (groups) results matching field_name to max 
         as specified in SOLR-236 slated for 1.4/5
         """
         clone = self._clone()
-        clone.query.collapse(field, max)
+        clone.query.collapse(field, max, collapse_type)
         return clone
 
     # DRL_TODO: Should this prevent other methods (filter/exclude/etc) from working?

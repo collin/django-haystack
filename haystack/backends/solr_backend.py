@@ -75,7 +75,7 @@ class SearchBackend(BaseSearchBackend):
 
     def search(self, query_string, sort_by=None, start_offset=0, end_offset=None,
                fields='', highlight=False, facets=None, date_facets=None, query_facets=None,
-               narrow_queries=None, collapse_field=None, collapse_max=None, **kwargs):
+               narrow_queries=None, collapse_field=None, collapse_max=None, collapse_type=None, **kwargs):
         if len(query_string) == 0:
             return {
                 'results': [],
@@ -100,7 +100,7 @@ class SearchBackend(BaseSearchBackend):
         
         if highlight is True:
             kwargs['hl'] = 'true'
-            kwargs['hl.fragsize'] = '200'
+            kwargs['hl.fragsize'] = '70'
         
         if getattr(settings, 'HAYSTACK_INCLUDE_SPELLING', False) is True:
             kwargs['spellcheck'] = 'true'
@@ -137,8 +137,7 @@ class SearchBackend(BaseSearchBackend):
             #http://wiki.apache.org/solr/FieldCollapsing
             #&collapse.field=url&collapse.max=1&collapse.type=normal
             kwargs['collapse'] = 'true'
-            #kwargs['collapse.type'] = 'adjacent' -- what's this mode mean???
-            kwargs['collapse.type'] = 'normal'
+            kwargs['collapse.type'] = collapse_type
             kwargs['collapse.max'] = collapse_max# assumes defaults to an int
             kwargs['collapse.field'] = collapse_field
         
@@ -387,6 +386,7 @@ class SearchQuery(BaseSearchQuery):
         if self.collapse_field:
             kwargs['collapse_field'] = self.collapse_field
             kwargs['collapse_max'] = self.collapse_max
+            kwargs['collapse_type'] = self.collapse_type
         
         results = self.backend.search(final_query, **kwargs)
         self._results = results.get('results', [])
